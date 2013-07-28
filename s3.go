@@ -18,17 +18,17 @@ import (
 
 // Bucket is representation of an S3 bucket.
 type Bucket struct {
-  // Name is the bucket name
-  // Example: "com-awesome-dev-bucket"
-  Name   string
+	// Name is the bucket name
+	// Example: "com-awesome-dev-bucket"
+	Name string
 
-  // Base is the URL base for the region
-  // Example: ".s3.amazonaws.com/"
-  Base   string
+	// Base is the URL base for the region
+	// Example: ".s3.amazonaws.com/"
+	Base string
 
-  // S3 Key
-	Key    string
-  // S3 Secret
+	// S3 Key
+	Key string
+	// S3 Secret
 	Secret string
 }
 

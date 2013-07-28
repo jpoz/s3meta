@@ -1,3 +1,5 @@
+// Package s3meta an interface to Amazon's Simple Storage Solution with
+// a focus on User Defined Meta data
 package s3meta
 
 import (
@@ -14,10 +16,19 @@ import (
 	"time"
 )
 
+// Bucket is representation of an S3 bucket.
 type Bucket struct {
-	Name   string // "com-awesome-dev-bucket"
-	Base   string // ".s3.amazonaws.com/"
+  // Name is the bucket name
+  // Example: "com-awesome-dev-bucket"
+  Name   string
+
+  // Base is the URL base for the region
+  // Example: ".s3.amazonaws.com/"
+  Base   string
+
+  // S3 Key
 	Key    string
+  // S3 Secret
 	Secret string
 }
 
@@ -132,7 +143,7 @@ func (b *Bucket) GetS3ObjectWithMetaData(key string) (str string, data map[strin
 	return
 }
 
-func (b *Bucket) GetS3BucketResponse(prefix string) (*http.Response, error) {
+func (b *Bucket) ListS3BucketObjectsResponse(prefix string) (*http.Response, error) {
 	fullPath := "http://" + b.Name + b.Base + "?prefix=" + prefix
 	req, err := http.NewRequest("GET", fullPath, nil)
 	if err != nil {
@@ -153,8 +164,8 @@ type ListBucketResult struct {
 	Contents []BucketItem
 }
 
-func (b *Bucket) GetS3Bucket(prefix string) (result *ListBucketResult, err error) {
-	resp, err := b.GetS3BucketResponse(prefix)
+func (b *Bucket) ListS3BucketObjects(prefix string) (result *ListBucketResult, err error) {
+	resp, err := b.ListS3BucketObjectsResponse(prefix)
 	if err != nil {
 		return
 	}

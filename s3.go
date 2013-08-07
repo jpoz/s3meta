@@ -16,10 +16,8 @@ import (
 	"time"
 )
 
-
-
 var (
-  MaxAttempts          = 5
+	MaxAttempts          = 5
 	TotalAttemptTimeout  = 5 * time.Second
 	DelayBetweenAttempts = 200 * time.Millisecond
 )
@@ -276,18 +274,18 @@ func (b *Bucket) PutS3ObjectWithMetaData(key string, bs []byte, data map[string]
 func (b *Bucket) authDoRequest(request *http.Request) (resp *http.Response, err error) {
 	b.authRequest(request)
 
-	start   := time.Now()
-  timeout := start.Add(TotalAttemptTimeout)
-  for attempt := 1; attempt <= MaxAttempts; attempt++ {
-    resp, err = http.DefaultClient.Do(request)
-    if err == nil {
-      break
-    }
-    if time.Now().After(timeout) {
-      break
-    }
-    time.Sleep(DelayBetweenAttempts)
-  }
+	start := time.Now()
+	timeout := start.Add(TotalAttemptTimeout)
+	for attempt := 1; attempt <= MaxAttempts; attempt++ {
+		resp, err = http.DefaultClient.Do(request)
+		if err == nil {
+			break
+		}
+		if time.Now().After(timeout) {
+			break
+		}
+		time.Sleep(DelayBetweenAttempts)
+	}
 
 	return resp, err
 }

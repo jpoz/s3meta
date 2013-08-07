@@ -13,12 +13,12 @@ var TestBucket *Bucket
 
 func S3GetHandler(ctx *web.Context, key string) (ret string) {
 	val := FakeS3[key]
-  if val == "" {
-    ctx.Abort(404, "Not Found")
-    return
-  } else if val == "FAIL" {
-    ctx.Redirect(301, "htttttttp://idon'twork")
-    return
+	if val == "" {
+		ctx.Abort(404, "Not Found")
+		return
+	} else if val == "FAIL" {
+		ctx.Redirect(301, "htttttttp://idon'twork")
+		return
 	} else {
 		return val
 	}
@@ -71,16 +71,16 @@ func TestGetS3Object(t *testing.T) {
 }
 
 func TestRetrys(t *testing.T) {
-  // Make FakeS3 give a failure
+	// Make FakeS3 give a failure
 	FakeS3["matt"] = "FAIL"
 
-  // key matt will 404 on the first attempt
-  // 400ms after the key will be set
-  // 3 rety should get a 200
-  go func() {
-    time.Sleep(time.Millisecond * 200)
-	  FakeS3["matt"] = "sacks"
-  }()
+	// key matt will 404 on the first attempt
+	// 400ms after the key will be set
+	// 3 rety should get a 200
+	go func() {
+		time.Sleep(time.Millisecond * 200)
+		FakeS3["matt"] = "sacks"
+	}()
 
 	str, err := TestBucket.GetS3Object("matt")
 	if str != "sacks" {

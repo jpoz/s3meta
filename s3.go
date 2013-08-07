@@ -16,6 +16,14 @@ import (
 	"time"
 )
 
+
+
+var (
+  MaxAttempts          = 5
+	TotalAttemptTimeout  = 5 * time.Second
+	DelayBetweenAttempts = 200 * time.Millisecond
+)
+
 // Bucket is representation of an S3 bucket.
 type Bucket struct {
 	// Name is the bucket name
@@ -265,10 +273,23 @@ func (b *Bucket) PutS3ObjectWithMetaData(key string, bs []byte, data map[string]
 	return nil
 }
 
-func (b *Bucket) authDoRequest(request *http.Request) (*http.Response, error) {
+func (b *Bucket) authDoRequest(request *http.Request) (resp *http.Response, err error) {
 	b.authRequest(request)
 
-	return http.DefaultClient.Do(request)
+	start   := time.Now()
+  timeout := start.Add(TotalAttemptTimeout)
+  for attempt := 1; attempt <= MaxAttempts; attempt++ {
+    resp, err = http.DefaultClient.Do(request)
+    if err == nil {
+      break
+    }
+    if time.Now().After(timeout) {
+      break
+    }
+    time.Sleep(DelayBetweenAttempts)
+  }
+
+	return resp, err
 }
 
 // http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#ConstructingTheAuthenticationHeader
